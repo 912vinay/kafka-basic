@@ -2,8 +2,10 @@ package com.vinaypal.kafka.config;
 
 import com.vinaypal.kafka.entities.Farewell;
 import com.vinaypal.kafka.entities.Greeting;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.MicrometerConsumerListener;
 import org.springframework.kafka.support.converter.RecordMessageConverter;
 import org.springframework.kafka.support.converter.StringJsonMessageConverter;
 import org.springframework.kafka.support.mapping.DefaultJackson2JavaTypeMapper;
@@ -23,7 +26,11 @@ import java.util.Map;
 
 @EnableKafka
 @Configuration
+
 public class KafkaMultiConsumerConfig {
+
+    @Autowired
+    private MeterRegistry meterRegistry;
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
@@ -53,7 +60,9 @@ public class KafkaMultiConsumerConfig {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(props);
+        DefaultKafkaConsumerFactory<String, Object> objectObjectDefaultKafkaConsumerFactory = new DefaultKafkaConsumerFactory<>(props);
+        objectObjectDefaultKafkaConsumerFactory.addListener(new MicrometerConsumerListener<>(this.meterRegistry));
+        return objectObjectDefaultKafkaConsumerFactory;
     }
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> multiTypeKafkaListenerContainerFactory() {

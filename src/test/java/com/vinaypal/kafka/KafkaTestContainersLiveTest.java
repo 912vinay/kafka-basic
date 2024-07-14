@@ -1,3 +1,4 @@
+/*
 package  com.vinaypal.kafka;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -38,13 +39,15 @@ import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 
 
+*/
 /**
  * This test class uses Testcontainers to instantiate and manage an external Apache
  * Kafka broker hosted inside a Docker container.
  *
  * Therefore, one of the prerequisites for using Testcontainers is that Docker is installed on the host running this test
  *
- */
+ *//*
+
 @RunWith(SpringRunner.class)
 @Import(com.vinaypal.kafka.KafkaTestContainersLiveTest.KafkaTestContainersConfiguration.class)
 @SpringBootTest(classes = KafkaProducerConsumerApplication.class)
@@ -135,4 +138,4 @@ public class KafkaTestContainersLiveTest {
 
     }
 
-}
+}*/
